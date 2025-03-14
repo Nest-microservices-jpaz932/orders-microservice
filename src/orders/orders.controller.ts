@@ -9,22 +9,22 @@ import { changeOrderStatus } from './dto/change-order-status.dto';
 export class OrdersController {
     constructor(private readonly ordersService: OrdersService) {}
 
-    @MessagePattern({ cmd: 'createOrder' })
+    @MessagePattern('orders.create')
     create(@Payload() createOrderDto: CreateOrderDto) {
         return this.ordersService.create(createOrderDto);
     }
 
-    @MessagePattern({ cmd: 'findAllOrders' })
+    @MessagePattern('orders.findAll')
     findAll(@Payload() pagination: OrderPaginationDto) {
         return this.ordersService.findAll(pagination);
     }
 
-    @MessagePattern({ cmd: 'findOneOrder' })
+    @MessagePattern('orders.findOne')
     findOne(@Payload('id', ParseUUIDPipe) id: string) {
         return this.ordersService.findOne(id);
     }
 
-    @MessagePattern({ cmd: 'changeOrderStatus' })
+    @MessagePattern('orders.changeStatus')
     changeOrderStatus(@Payload() updateOrderDto: changeOrderStatus) {
         return this.ordersService.changeOrderStatus(updateOrderDto);
     }
