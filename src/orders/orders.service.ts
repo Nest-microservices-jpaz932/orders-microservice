@@ -13,6 +13,7 @@ import { changeOrderStatus } from './dto/change-order-status.dto';
 import { NATS_SERVICE } from 'src/config/services';
 import { firstValueFrom } from 'rxjs';
 import { Product } from './interfaces/product.interface';
+import { PaidOrderDto } from './dto/paid-order.dto';
 
 @Injectable()
 export class OrdersService extends PrismaClient implements OnModuleInit {
@@ -167,5 +168,22 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
             where: { id },
             data: { status },
         });
+    }
+
+    async paidOrder(paidOrderDto: PaidOrderDto) {
+        const order = await this.order.update({
+            where: { id: paidOrderDto.orderId },
+            data: {
+                status: 'PAID',
+                paid: true,
+                paidAt: new Date(),
+                stripeChargeId: paidOrderDto.stripePaymentId,
+                OrderReceipt: {
+                    create: { receiptUrl: paidOrderDto.receiptUrl },
+                },
+            },
+        });
+
+        return order;
     }
 }

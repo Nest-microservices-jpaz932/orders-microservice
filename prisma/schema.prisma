@@ -5,37 +5,49 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 enum OrderStatus {
-  PENDING
-  DELIVERED
-  CANCELLED
+    PENDING
+    PAID
+    DELIVERED
+    CANCELLED
 }
 
 model Order {
-    id          String      @id @default(uuid())
-    totalAmount Float
-    totalItems  Int
-    status      OrderStatus @default(PENDING)
-    paid        Boolean     @default(false)
-    paidAt      DateTime?
-    createdAt   DateTime    @default(now())
-    updatesAt   DateTime    @updatedAt
-    OrderItem   OrderItem[]
+    id             String        @id @default(uuid())
+    totalAmount    Float
+    totalItems     Int
+    status         OrderStatus   @default(PENDING)
+    paid           Boolean       @default(false)
+    paidAt         DateTime?
+    stripeChargeId String?
+    createdAt      DateTime      @default(now())
+    updatesAt      DateTime      @updatedAt
+    OrderItem      OrderItem[]
+    OrderReceipt   OrderReceipt?
 }
 
 model OrderItem {
-    id        String   @id @default(uuid())
+    id        String  @id @default(uuid())
     productId Int
     quantity  Int
     price     Float
-    order     Order?   @relation(fields: [orderId], references: [id])
+    order     Order?  @relation(fields: [orderId], references: [id])
     orderId   String?
+}
+
+model OrderReceipt {
+    id         String   @id @default(uuid())
+    order      Order    @relation(fields: [orderId], references: [id])
+    orderId    String   @unique
+    receiptUrl String
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 }
