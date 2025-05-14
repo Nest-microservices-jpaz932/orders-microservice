@@ -7,3 +7,8 @@
 4. Up docker `docker compose up -d`
 5. Run Prisma migration `npx prisma migrate dev`
 6. Run `npm run start:dev`
+
+## Production
+```
+docker build -f dockerfile.prod -t orders-microservice .
+```
